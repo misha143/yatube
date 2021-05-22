@@ -1,6 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from .models import Post, Group
+from .forms import PostForm
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+
+User = get_user_model()
 
 
 def index(request):
@@ -18,3 +24,22 @@ def group_posts(request, slug):
     # условия WHERE group_id = {group_id}
     posts = Post.objects.filter(group=group)[:12]
     return render(request, "group.html", {"group": group, "posts": posts})
+
+
+@login_required
+def new_post(request):
+    title = "Добавить запись"
+    btn_caption = "Добавить"
+    form = PostForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.save()
+        return redirect("index")
+    form = PostForm()
+    context = {
+        "form": form,
+        "title": title,
+        "btn_caption": btn_caption
+    }
+    return render(request, "post_edit.html", context)
