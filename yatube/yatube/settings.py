@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-t)1*)n7gynf0_%*jouo222^us)7yr337yagv$ld@x5f!$ab%0x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "[::1]",
+        "testserver",
+]
 
 
 # Application definition
@@ -34,6 +39,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'posts',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 ]
+
+# Идентификатор текущего сайта
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
