@@ -3,8 +3,9 @@ from django.urls import include, path
 from django.contrib.flatpages import views
 
 urlpatterns = [
-    # импорт правил из приложения posts
-    path("", include("posts.urls")),
+    path('about-author/', views.flatpage, {'url': '/about-author/'}, name='about-author'),
+    path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='about-spec'),
+
     # flatpages
     path('about/', include('django.contrib.flatpages.urls')),
     #  регистрация и авторизация
@@ -16,10 +17,6 @@ urlpatterns = [
 
     # импорт правил из приложения admin
     path("admin/", admin.site.urls),
-]
-
-# добавим новые пути
-urlpatterns += [
-        path('about-author/', views.flatpage, {'url': '/about-author/'}, name='about-author'),
-        path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='about-spec'),
+    # импорт правил из приложения posts
+    path("", include("posts.urls")),
 ]

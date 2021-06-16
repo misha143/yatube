@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
+from django.db.models import Count
 from .models import Post, Group
 from .forms import PostForm
 
@@ -23,21 +24,39 @@ def index(request):
 
 
 def profile(request, username):
-        # тут тело функции
-        return render(request, 'profile.html', {})
+    # тут тело функции
+    user = get_object_or_404(User, username=username)
+    posts_list = Post.objects.filter(author=user).order_by("-pub_date").all()
+    posts_count = posts_list.count()
+    paginator = Paginator(posts_list, 10)  # показывать по 10 записей на странице.
+    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
+    page = paginator.get_page(page_number)  # получить записи с нужным смещением
+    return render(request, 'profile.html',
+                  {"profile": user, "posts_list": page, "paginator": paginator, "cnt_posts": posts_count})
 
 
 def post_view(request, username, post_id):
-        # тут тело функции
-        return render(request, 'post.html', {})
+    user = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, id=post_id)
+    post_list = Post.objects.filter(author=user).all()
+    posts_count = post_list.count()
+    return render(request, 'post.html', {"profile": user, "post": post, "cnt_posts": posts_count})
 
 
+@login_required
 def post_edit(request, username, post_id):
-        # тут тело функции. Не забудьте проверить,
-        # что текущий пользователь — это автор записи.
-        # В качестве шаблона страницы редактирования укажите шаблон создания новой записи
-        # который вы создали раньше (вы могли назвать шаблон иначе)
-        return render(request, 'post_new.html', {})
+    post = get_object_or_404(Post, id=post_id)
+    user = get_object_or_404(User, username=username)
+    if request.user != user:
+        return redirect("post", username=user.username, post_id=post_id)
+
+    title = "Редактировать запись"
+    btn_caption = "Сохранить"
+    form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("post", username=request.user.username, post_id=post_id)
+    return render(request, "post_edit.html", {"form": form, "title": title, "btn_caption": btn_caption, "post": post})
 
 
 # view-функция для страницы сообщества
