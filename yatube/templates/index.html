@@ -1,18 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Последние обновления на сайте{% endblock %}
-{% block header %}Последние обновления на сайте{% endblock %}
+{% block title %}Последние обновления {% endblock %}
+
 {% block content %}
+<div class="container">
 
-    {% for post in page %}
-    <h3>
-        Автор: <a href="{% url 'profile' post.author %}">{{ post.author.get_full_name }}</a>, Дата публикации: {{ post.pub_date|date:"d M Y" }}
-    </h3>
-    <p>{{ post.text|linebreaksbr }}</p>
-    {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %}
+    {% include "menu.html" with index=True %}
 
-    {% if page.has_other_pages %}
-        {% include "paginator.html" with items=page paginator=paginator %}
-    {% endif %}
+        <h1>Последние обновления на сайте</h1>
 
+
+    <p>
+    <a class="btn btn-info" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+       aria-controls="collapseExample"><i class="fa fa-caret-down"></i> Авторы нашего сайта</a>
+    </p>
+    <div class="collapse" id="collapseExample" style="margin-bottom: 40px">
+      <div class="card card-body">
+
+
+
+          <div class="list-group">
+            {% for u in users_list %}
+            <a href="{% url 'profile' u %}" class="list-group-item list-group-item-action">@{{ u }}</a>
+            {% endfor %}
+
+          </div>
+
+
+      </div>
+    </div>
+
+
+        {% for post in page %}
+            {% include "post_item.html" with post=post %}
+        {% endfor %}
+
+        {% if page.has_other_pages %}
+            {% include "paginator.html" with items=page paginator=paginator%}
+        {% endif %}
+
+    </div>
 {% endblock %}

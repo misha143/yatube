@@ -5,6 +5,7 @@
 
 {% block content %}
 
+{% load thumbnail %}
 <!--{{ user.get_full_name }}-->
 
 <!--{{ user }}-->
@@ -14,63 +15,14 @@
 <!--{% endfor %}-->
 
 
-<main role="main" class="container">
+<main role="main" class="container" style="margin-top: 20px">
     <div class="row">
-        <div class="col-md-3 mb-3 mt-1">
-            <div class="card">
-                <div class="card-body">
-                    <div class="h2">
-                        <!-- Имя автора -->
-                        {{ profile.get_full_name }}
-                    </div>
-                    <div class="h3 text-muted">
-                        <!-- username автора -->
-                        @{{ profile }}
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div class="h6 text-muted">
-                            Подписчиков: XXX <br/>
-                            Подписан: XXX
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="h6 text-muted">
-                            <!-- Количество записей -->
-                            Записей: {{ cnt_posts }}
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
+
+        {% include "sidebar_profile.html" %}
 
         <div class="col-md-9">
             {% for post in posts_list %}
-            <!-- Начало блока с отдельным постом -->
-            <div class="card mb-3 mt-1 shadow-sm">
-                <div class="card-body">
-                    <p class="card-text">
-                        <!-- Ссылка на страницу автора в атрибуте href; username автора в тексте ссылки -->
-                        <a href="{% url 'profile' profile %}"><strong class="d-block text-gray-dark">{{ profile.get_full_name }} @{{ profile }}</strong></a>
-                        <!-- Текст поста -->
-                        {{ post }}
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group ">
-                            <!-- Ссылка на страницу записи в атрибуте href-->
-                            <a class="btn btn-sm text-muted" href="{% url 'post' profile post.pk %}" role="button">Добавить
-                                комментарий</a>
-                            <!-- Ссылка на редактирование, показывается только автору записи -->
-                            {% if profile.username == user.username %}
-                            <a class="btn btn-sm text-muted" href="{% url 'post_edit' profile post.pk %}" role="button">Редактировать</a>
-                            {% endif %}
-                        </div>
-                        <!-- Дата публикации  -->
-                        <small class="text-muted">{{ post.pub_date }}</small>
-                    </div>
-                </div>
-            </div>
+            {% include "post_item.html" with post=post %}
             <!-- Конец блока с отдельным постом -->
             {% endfor %}
             <!-- Остальные посты -->
@@ -84,6 +36,7 @@
 
         </div>
     </div>
+
 </main>
 
 {% endblock %}

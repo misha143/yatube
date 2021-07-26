@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Ваши подписки {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+
+    {% include "menu.html" with index=True %}
+
+    <h1>Ваши подписки на сайте</h1>
+    {% if following_list|length == 0 %}
+          Тут пока пусто!<br>Подпишитесь на кого-нибудь :)<br>Можно даже на себя! <a href="{% url 'profile_follow' request.user %}">*тык*</a>
+    {% else %}
+    <p>
+    <a class="btn btn-info" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+       aria-controls="collapseExample"><i class="fa fa-caret-down"></i> Список ваших подписок</a>
+    </p>
+    <div class="collapse" id="collapseExample" style="margin-bottom: 40px">
+      <div class="card card-body">
+
+
+
+          <div class="list-group">
+            {% for following in following_list %}
+            <a href="{% url 'profile' following %}" class="list-group-item list-group-item-action">@{{ following }}</a>
+            {% endfor %}
+
+          </div>
+
+
+      </div>
+    </div>
+    {% endif %}
+    {% for post in page %}
+    {% include "post_item.html" with post=post %}
+    {% endfor %}
+
+    {% if page.has_other_pages %}
+    {% include "paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+
+</div>
+{% endblock %}
